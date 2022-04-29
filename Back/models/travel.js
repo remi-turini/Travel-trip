@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
-      Travel.belongsToMany(User, {through: 'UserTravel', foreignKey: 'TravelId' })
+    static associate(Model.) {
+      Travel.belongsToMany(User, {as: 'users', through: 'UserTravel', foreignKey: 'TravelId' })
     }
   }
   Travel.init({

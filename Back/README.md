@@ -16,7 +16,7 @@ List of dependencies :
 To start the express server, run the following
 
 ```bash
-npm start
+nodemon
 ```
 
 And run wamp server or you will say oh shit why is it not working ?! Because you're bad fuckers !
