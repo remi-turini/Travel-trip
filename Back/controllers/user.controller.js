@@ -2,7 +2,12 @@ const models = require("../models")
 
 function getAllUser(req, res)
 {
-    models.user.findAll().then(result => {
+    models.User.findAll({
+        include: {
+            model: models.Travel,
+            as: 'travels',
+        },
+    }).then(result => {
         res.status(200).json({
             state: "ok",
             message: null,
