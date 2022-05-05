@@ -10,14 +10,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      UserTravel.belongsTo(models.User, {
-        foreignKey: 'userId',
-        as: 'users'
-      });
-      UserTravel.belongsTo(models.Travel, {
-        foreignKey: 'travelId',
-        as: 'travels'
-      });
+      // UserTravel.belongsTo(models.User);
+      // UserTravel.belongsTo(models.Travel);
     }
   }
   UserTravel.init({
@@ -26,6 +20,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'UserTravel',
+    freezeTableName: true,
+    timestamps: false
   });
   return UserTravel;
 };

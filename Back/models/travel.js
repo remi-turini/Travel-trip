@@ -11,9 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Travel.belongsToMany(models.User, {
-        as: 'users',
         through: 'UserTravel',
-        foreignKey: 'TravelId'
+        foreignKey: 'travelId'
       })
     }
   }
@@ -25,6 +24,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Travel',
+    freezeTableName: true,
+    timestamps: false
   });
   return Travel;
 };

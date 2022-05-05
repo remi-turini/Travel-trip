@@ -5,8 +5,8 @@ function getAllUser(req, res)
     models.User.findAll({
         include: {
             model: models.Travel,
-            as: 'travels',
-        },
+            through: { attributes: []},
+            },
     }).then(result => {
         res.status(200).json({
             state: "ok",
