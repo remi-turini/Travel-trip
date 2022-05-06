@@ -1,13 +1,10 @@
 const models = require("../models")
 const bcrypt = require('bcrypt');
 
-function getAllUser(req, res)
+function getUser(req, res)
 {
-    models.User.findAll({
-        include: {
-            model: models.Travel,
-            through: { attributes: []}
-        },
+    models.User.findOne({
+        id: req.auth.userId
     }).then(result => {
         res.status(200).json({
             state: "ok",
@@ -53,19 +50,19 @@ function createUser(req, res)
 
             bcrypt.hash(req.body.password, 10)
                 .then(hash => {
-                    const newUser = {
+                    const newUser =  models.User.build ({
                         firstname: req.body.firstname,
                         lastname: req.body.lastname,
                         email: req.body.email,
                         password: hash,
-                    }
+                    });
 
-                    models.User.create(newUser)
+                    newUser.save()
                         .then(result => {
                             res.status(201).json({
                                 state: "ok",
                                 message: "Compte crée avec succès",
-                                data: null
+                                data: result
                             });
                         })
                         .catch(error => {
@@ -89,8 +86,46 @@ function createUser(req, res)
         }));
 }
 
+async function updateUser(req, res)
+{
+    models.User.findOne({ where: {id: req.auth.userId} })
+        .then(user => {
+            if(!user){
+                res.status(404).json({
+                    state: "error",
+                    message: "L'utilisateur spécifié n'existe pas",
+                    data: null
+                })
+            }
+
+            user.set({
+                firstname: req.body.firstname ? req.body.firstname : user.lastname,
+                lastname: req.body.lastname ? req.body.lastname : user.lastname,
+                email: req.body.email ? req.body.email : user.email
+            });
+
+            user.save()
+                .then(result => res.status(201).json({
+                    state: "ok",
+                    message: "Compte mise à jour avec succès",
+                    data: result
+                }))
+                .catch(error => res.status(500).json({
+                    state: "error update user",
+                    message: "Une erreur inattendu est survenue",
+                    data: error
+                }));
+        })
+        .catch(error => res.status(500).json({
+            state: "error find user",
+            message: "Une erreur inattendu est survenue",
+            data: error
+        }));
+}
+
 
 module.exports = {
-    getAllUser: getAllUser,
-    createUser: createUser
+    getUser: getUser,
+    createUser: createUser,
+    updateUser: updateUser,
 }

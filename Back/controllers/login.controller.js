@@ -7,15 +7,16 @@ function login(req, res, next)
     models.User.findOne({ where: { email: req.body.email } })
         .then(user => {
             if (!user) {
-                return res.status(401).json({
+                return res.status(404).json({
                     state: "error",
                     message: 'Utilisateur non trouvé !',
-                    data: null });
+                    data: null
+                });
             }
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
                     if (!valid) {
-                        return res.status(401).json({
+                        return res.status(400).json({
                             state: "error",
                             message: 'Mot de passe incorrect !',
                             data: null
