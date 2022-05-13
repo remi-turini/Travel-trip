@@ -4,7 +4,8 @@ const models = require("../models");
 
 function login(req, res, next)
 {
-    models.User.findOne({ where: { email: req.body.email } })
+    return res.json({body: req.body});
+    models.User.findOne({ where: { email: req.headers.email } })
         .then(user => {
             if (!user) {
                 return res.status(404).json({
