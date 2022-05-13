@@ -15,7 +15,7 @@ function login(req, res, next)
                     data: null
                 });
             }
-            bcrypt.compare(req.body.password, user.password)
+            bcrypt.compare(req.query.password, user.password)
                 .then(valid => {
                     if (!valid) {
                         return res.status(400).json({
