@@ -6,7 +6,7 @@ function login(req, res, next)
 {
     console.log("ton body est : ", req.body);
     console.log("tes param sont : ", req.query);
-    models.User.findOne({ where: { email: req.query.email } })
+    models.User.findOne({ where: { email: req.body.email } })
         .then(user => {
             if (!user) {
                 return res.status(404).json({
@@ -15,7 +15,7 @@ function login(req, res, next)
                     data: null
                 });
             }
-            bcrypt.compare(req.query.password, user.password)
+            bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
                     if (!valid) {
                         return res.status(400).json({
