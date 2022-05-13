@@ -6,7 +6,7 @@ const cors = require('cors');
 const usersRoute = require("./routes/user");
 const loginRoute = require("./routes/login");
 
-app.use(bodyParser.json(), cors);
+app.use(bodyParser.json(), cors());
 
 app.use("/user", usersRoute);
 app.use("/login", loginRoute);
