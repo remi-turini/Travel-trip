@@ -13,11 +13,23 @@ module.exports = (sequelize, DataTypes) => {
       Travel.belongsToMany(models.User, {
         through: 'UserTravel',
         foreignKey: 'travelId'
-      })
+      });
 
       Travel.hasMany(models.Transport, {
         foreignKey: 'travelId'
-      })
+      });
+
+      Travel.hasMany(models.Activity, {
+        foreignKey: 'travelId'
+      });
+
+      Travel.hasMany(models.Sleep, {
+        foreignKey: 'travelId'
+      });
+
+      Travel.hasMany(models.Eat, {
+        foreignKey: 'travelId'
+      });
     }
   }
   Travel.init({
@@ -31,5 +43,10 @@ module.exports = (sequelize, DataTypes) => {
     freezeTableName: true,
     timestamps: false
   });
+
+  Travel.prototype.getId = function () {
+    return this.getDataValue('id');
+  };
+
   return Travel;
 };
