@@ -4,12 +4,12 @@ const bcrypt = require('bcrypt');
 function getUser(req, res)
 {
     models.User.findOne({
-        id: req.auth.userId
-    }).then(result => {
+        where: {id: req.auth.userId}
+    }).then(user => {
         res.status(200).json({
             state: "ok",
             message: null,
-            data: result
+            data: user
         });
     }).catch(error => {
         res.status(500).json({

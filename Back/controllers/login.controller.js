@@ -5,12 +5,16 @@ const models = require("../models");
 function login(req, res, next)
 {
     console.log("la request est : ", req)
-    models.User.findOne({ where: { email: req.body.email } })
+    var userEmail = null;
+    if (req.body.email !== undefined)
+        userEmail = req.body.email;
+
+    models.User.findOne({ where: { email: userEmail } })
         .then(user => {
             if (!user) {
                 return res.status(404).json({
                     state: "error",
-                    message: 'Utilisateur non trouvé !',
+                    message: 'L\'addresse mail spécifié n\'existe pas !',
                     data: null
                 });
             }

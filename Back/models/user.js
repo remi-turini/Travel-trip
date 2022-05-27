@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       User.belongsToMany(models.Travel, {
         through: 'UserTravel',
         foreignKey: 'userId'
-      })
+      });
     }
   }
   User.init({
