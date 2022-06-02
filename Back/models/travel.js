@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Travel.init({
+    name: DataTypes.STRING,
     startDate: DataTypes.DATE,
     endDate: DataTypes.DATE,
     price: DataTypes.FLOAT,

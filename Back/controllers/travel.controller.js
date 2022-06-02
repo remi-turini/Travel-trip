@@ -87,9 +87,72 @@ async function shareTravel(req, res)
     });
 }
 
-function createTravel(req, res)
+async function createTravel(req, res)
 {
-    req.body.name
+    var travelName;
+
+    var startCity;
+    var startAt;
+
+    var arrivedCity;
+    var endAt;
+
+    req.body.travelName !== undefined ? travelName = req.body.travelName : travelName = null;
+    req.body.startCity !== undefined ? startCity = req.body.startCity : startCity = null;
+    req.body.startAt !== undefined ? startAt = req.body.startAt : startAt = null;
+    req.body.arrivedCity !== undefined ? arrivedCity = req.body.arrivedCity : arrivedCity = null;
+    req.body.endAt !== undefined ? endAt = req.body.endAt : endAt = null;
+
+
+    const userAuth = await models.User.findByPk(req.auth.userId, {
+        include: {
+            model: models.Travel,
+        }
+    });
+
+    const userTravel = await userAuth.getTravels({
+        where: {name: travelName}
+    });
+
+    if (userTravel.length !== 0){
+        return res.status(404).json({
+            state: "error",
+            message: "Vous avez déjà crée un voyage : " + travelName,
+            data: null
+        });
+    }
+
+
+    const newTravel = await models.Travel.create({
+        name: travelName,
+        startDate: startAt,
+        endDate: endAt,
+    });
+
+    const addedTravel = await userAuth.addTravel(newTravel, { through: models.UserTravel });
+
+    const newTransport = await models.Transport.create({
+        startCity: startCity,
+        startAt: startAt,
+        arrivedCity: arrivedCity,
+        arrivedAt: endAt
+    });
+
+    const addedTransport = await newTravel.addTransport(newTransport);
+
+    if (addedTravel == 0){
+        res.status(404).json({
+            state: "error",
+            message: "Echec de création du voyage",
+            data: null
+        });
+    }
+
+    res.status(404).json({
+        state: "ok",
+        message: "Voyage crée avec succès",
+        data: newTransport
+    });
 }
 
 async function test(req, res) {
@@ -105,5 +168,6 @@ async function test(req, res) {
 module.exports = {
     getTravels: getTravels,
     shareTravel: shareTravel,
+    createTravel: createTravel,
     test: test,
 }
