@@ -12,14 +12,18 @@ function getTravels(req, res)
     })
         .then(travels => {
             if (!travels) {
-                res.status(401).json({
+                return res.status(404).json({
                     state: "error",
                     message: "Aucun voyage",
                     data: null
                 });
             }
-            console.log(travels);
-            return res.json({travels: travels});
+
+            return res.status(200).json({
+                state: "ok",
+                message: null,
+                data: travels
+            });
         })
         .catch(error => res.status(500).json({
             state: "error find travels",
