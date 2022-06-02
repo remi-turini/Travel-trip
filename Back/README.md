@@ -2,6 +2,7 @@
 
 ```bash
 npm install
+npm install -g sequelize-cli mysql2
 ```
 
 List of dependencies :

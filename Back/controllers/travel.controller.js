@@ -29,6 +29,42 @@ function getTravels(req, res)
 
 }
 
+async function getTravelById(req, res)
+{
+    const travelName = req.body.travelName ?? null;
+
+    const travel = await models.Travel.findOne({
+        where: {name: travelName},
+        include: [{
+            model: models.User,
+            where: {id: req.auth.userId},
+            attributes: [],
+        },
+            models.Transport,
+            models.Eat,
+            models.Sleep,
+            models.Activity
+        ]
+    });
+
+    if (travel === null)
+    {
+        return res.json({
+            state: "error",
+            message: "Ce voyage n'exsite pas",
+            data: null
+        });
+    }
+    else {
+        return res.json({
+            state: "ok",
+            message: null,
+            data: travel
+        });
+    }
+
+}
+
 async function shareTravel(req, res)
 {
     var userEmail = null;
@@ -115,7 +151,7 @@ async function createTravel(req, res)
     });
 
     if (userTravel.length !== 0){
-        return res.status(404).json({
+        return res.status(201).json({
             state: "error",
             message: "Vous avez déjà crée un voyage : " + travelName,
             data: null
@@ -167,6 +203,7 @@ async function test(req, res) {
 
 module.exports = {
     getTravels: getTravels,
+    getTravelById: getTravelById,
     shareTravel: shareTravel,
     createTravel: createTravel,
     test: test,
