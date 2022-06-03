@@ -8,7 +8,7 @@ function getUser(req, res)
     }).then(user => {
         res.status(200).json({
             state: "ok",
-            message: null,
+            message: "",
             data: user
         });
     }).catch(error => {
@@ -22,38 +22,34 @@ function getUser(req, res)
 
 function createUser(req, res)
 {
-    models.User.findOne({ where: { email: req.body.email } })
-        .then(user => {
-            if(user) {
-                return res.status(401).json({
-                    state: 'error',
-                    message: 'Email déjà utilisé par un utilisateur',
-                    data: null
-                })
-            }
+    const email = req.body.email ?? null;
+    const password = req.body.password ?? null;
 
+    models.User.findOne({ where: { email: email } })
+        .then(user => {
             let errorMessage = '';
 
-            if (req.body.email.length === 0)
+            if(user)
+                errorMessage = 'Email déjà utilisé par un utilisateur'
+            else if (!email)
                 errorMessage = "Email incorrecte";
-            else if (req.body.password.length === 0)
+            else if (!password)
                 errorMessage = "Mot de passe incorrecte";
 
-            if(errorMessage)
-            {
-                res.status(401).json({
+            if(errorMessage) {
+                return res.status(400).json({
                     state: "error",
                     message: errorMessage,
                     data: null
                 });
             }
 
-            bcrypt.hash(req.body.password, 10)
+            bcrypt.hash(password, 10)
                 .then(hash => {
                     const newUser =  models.User.build ({
                         firstname: req.body.firstname,
                         lastname: req.body.lastname,
-                        email: req.body.email,
+                        email: email,
                         password: hash,
                     });
 
@@ -123,9 +119,31 @@ async function updateUser(req, res)
         }));
 }
 
+async function deleteUser(req, res)
+{
+    const user = await models.User.findOne({where: {id: req.auth.userId}})
+
+    if(!user) {
+        res.status(404).json({
+            state: "error",
+            message: "Cet utilisateur n'existe pas",
+            data: null
+        });
+    }
+
+    await user.destroy();
+
+    res.status(200).json({
+        state: "ok",
+        message: "Utilisateur supprimé avec succèes",
+        data: null
+    });
+}
+
 
 module.exports = {
     getUser: getUser,
     createUser: createUser,
     updateUser: updateUser,
+    deleteUser: deleteUser
 }

@@ -21,7 +21,7 @@ function getTravels(req, res)
 
             return res.status(200).json({
                 state: "ok",
-                message: null,
+                message: "",
                 data: travels
             });
         })
@@ -44,28 +44,27 @@ async function getTravelById(req, res)
             where: {id: req.auth.userId},
             attributes: [],
         },
-            models.Transport,
+            models.Transport,   
             models.Eat,
             models.Sleep,
             models.Activity
         ]
     });
 
-    if (travel === null)
+    if (!travel)
     {
-        return res.json({
+        return res.status(400).json({
             state: "error",
             message: "Ce voyage n'exsite pas",
             data: null
         });
     }
-    else {
-        return res.json({
-            state: "ok",
-            message: null,
-            data: travel
-        });
-    }
+
+    return res.status(200).json({
+        state: "ok",
+        message: "",
+        data: travel
+    });
 
 }
 
