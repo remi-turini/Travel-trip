@@ -2,8 +2,14 @@
   <div class="my-trip">
     <section class="title">
       <div class="container">
-        <h1 class="h3 title-trip">8 jours à Paris et Marseille</h1>
-        <p class="title-date">18 avril 2022 - 25 avril 2022</p>
+        <h1 class="h3 title-trip">{{travels.name}}</h1>
+        <p class="title-date">{{travels.startDate}} - {{travels.endDate}}</p>
+        <input type="date" class="form-control" 
+                        id="end-at"
+                        aria-describedby="emailHelp"
+                        placeholder="Date de fin"
+                        name="endAt" :value="travels.startDate" required/>
+        <p>Looking for Product: {{ this.$route.params.name }}</p>
       </div>
     </section>
     <section class="resume">
@@ -79,17 +85,38 @@ export default {
   },
   data() {
     return {
-        center: {lat: 51.093048, lng: 6.842120},
-      markers: [
-        {
-          position: {
-            lat: 51.093048, lng: 6.842120
-          },
-        }
-        , // Along list of clusters
-      ]
+      travels: {},
     };
   },
+
+  created() {
+    this.fetchTravels();
+  },
+  methods: {
+    async fetchTravels() {
+
+      const requestOptions2 = {
+        method: "POST",
+        headers: { "Content-Type": "application/json", 'Authorization': 'Bearer '+localStorage.bearer, },
+        body: JSON.stringify({
+          travelName: this.$route.params.name,
+        }),
+      };
+      var url2 =
+        "http://localhost:3000/travel/one";
+       requestOptions2;
+      const res1 = await fetch(url2, requestOptions2);
+      const data1 = await res1.json();
+    if (res1.statusText == "OK") {
+        var newData = JSON.parse(JSON.stringify(data1));
+        this.travels = newData.data;
+        console.log(newData.data)
+      } else {
+        alert(res1.message);
+      }
+    },
+  },
+  
 };
 </script>
 

@@ -5,7 +5,6 @@ import Inscription from '@/components/RegisterAuth.vue'
 import MyTrip from '@/components/MyTrip.vue'
 import MyTrips from '@/components/MyTrips.vue'
 import Profile from '@/components/ProfilePage.vue'
-import Contact from '@/components/Contact.vue'
 
 const routes = [
     {
@@ -24,9 +23,10 @@ const routes = [
         component: Inscription
     },
     {
-        path: '/mon-voyage',
-        name: 'MyTrip',
-        component: MyTrip
+        path: '/mes-voyages/:name',
+        name: 'MesVoyages',
+        component: MyTrip,
+        props:true
     },
     {
         path: '/mes-voyages',
@@ -37,11 +37,6 @@ const routes = [
         path: '/profil',
         name: 'Profile',
         component: Profile
-    },
-    {
-        path: '/contact',
-        name: 'Contact',
-        component: Contact
     },
     {
         path: '/:pathMatch(.*)*',

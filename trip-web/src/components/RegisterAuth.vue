@@ -11,7 +11,7 @@
                   <div class="col-md-6 login-text">
                     <p>
                       Si vous avez déjà un compte<br />Vous pouvez vous
-                      <a href="/inscription">Connecter ici !</a>
+                      <a href="/connexion">Connecter ici !</a>
                     </p>
                   </div>
                   <div class="col-md-6">
@@ -93,6 +93,7 @@
 </template>
 
 <script>
+import { notify } from "@kyvg/vue3-notification";
 export default {
   name: "App",
   data() {
@@ -122,10 +123,13 @@ export default {
         requestOptions
       );
       const data = await truc.json();
-      if (data.error == null) {
-        this.$router.push("/login");
+      const response = data.error;
+      if (response && response.statuts >= 400 && response.status < 405) {
+        notify(
+          alert("Bienvenue")
+        );
       } else {
-        this.$alert("Email already used, try to log in or a different email.");
+        alert("Email already used, try to log in or a different email.");
       }
     },
   },

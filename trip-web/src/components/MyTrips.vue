@@ -7,11 +7,14 @@
         </div>
         <div class="row" >
         <div class="col-sm-3" v-for="item in travels" :key="item.id">
-          <div class="card shadow-sm  text-white">
+          <div class="card shadow-sm ">
+            <h2>{{item.name}}</h2>
             <img v-for="media in item.media" :key="media.id" :src="`${media.thumbnail.url}`" class="card-img"
               alt="..."/>
               <h3>{{ item.title}}</h3>
-              <a class="btn btn-primary" :href="`${item.link}`">Read more</a>
+              <router-link class="nav-link" :to="'/mes-voyages/' + item.name"
+                  >Voir plus</router-link
+                >
           </div>
         </div>
       </div>
@@ -34,18 +37,22 @@ export default {
   methods: {
     async fetchTravels() {
 
-
-      var url2 =
-        "http://localhost:3000/travel";
       const requestOptions2 = {
         method: "GET",
+        headers: { "Content-Type": "application/json", 'Authorization': 'Bearer '+localStorage.bearer, },
       };
+      var url2 =
+        "http://localhost:3000/travel/all";
+       requestOptions2;
       const res1 = await fetch(url2, requestOptions2);
       const data1 = await res1.json();
-      var newData = JSON.parse(JSON.stringify(data1));
-      this.travels = newData.data;
-       console.log(newData.data)
-    //   console.log(newData.data[0].media[0].thumbnail.url)    
+    if (res1.statusText == "OK") {
+        var newData = JSON.parse(JSON.stringify(data1));
+        this.travels = newData.data;
+        console.log(newData.data)
+      } else {
+        alert(res1.message);
+      }
     },
   },
 };

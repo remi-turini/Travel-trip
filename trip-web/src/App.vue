@@ -27,7 +27,6 @@
                   >Mes voyages</router-link
                 >
               </li>
-
               <li v-if="bearer == null" :key="index" class="nav-item">
                 <router-link class="nav-link" to="/connexion"
                   >Connexion</router-link
@@ -42,14 +41,6 @@
               <li v-if="bearer != null" class="nav-item">
                 <router-link class="nav-link mr-0 pr-0" to="/profil"
                   >Profil</router-link
-                >
-              </li>
-              <li class="nav-item">
-                <router-link
-                  to="/contact"
-                  class="dot home nav-link"
-                  aria-current="page"
-                  >Contact</router-link
                 >
               </li>
               <li v-if="bearer != null" class="nav-item">
@@ -112,14 +103,36 @@ export default {
       nightMode: false,
       bearer: localStorage.bearer,
       test: "test",
+      baseURL : "https://limitless-lake-55070.herokuapp.com/",
+      travels: null,
     };
   },
-
+  created() {
+    this.fetchTravels();
+  },
   methods: {
     logout() {
       localStorage.removeItem("bearer");
       localStorage.removeItem("userId");
       this.$router.go(this.$router.currentRoute);
+    },
+    async fetchTravels() {
+
+      const requestOptions2 = {
+        method: "GET",
+        headers: { "Content-Type": "application/json", 'Authorization': 'Bearer '+localStorage.bearer, },
+      };
+      var url2 =
+        "http://localhost:3000/travel/all";
+       requestOptions2;
+      const res1 = await fetch(url2, requestOptions2);
+      const data1 = await res1.json();
+    if (res1.statusText == "OK") {
+        var newData = JSON.parse(JSON.stringify(data1));
+        this.travels = newData.data;
+      } else {
+        alert(res1.message);
+      }
     },
   },
 };
@@ -169,5 +182,9 @@ footer {
  position: absolute;
   bottom: 0;
   width: 100%;
+}
+footer a{
+  text-decoration: none !important;
+  color: black;
 }
 </style>

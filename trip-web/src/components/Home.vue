@@ -12,23 +12,38 @@
       <h1 class="mb-3 h2">Planifié son voyage simplement</h1>
 
       <div class="container create-trip">
-        <form>
+        <form @submit.prevent="persistUser">
+          <input type="text" class="form-control" v-model="travelName"
+                        id="travel-name"
+                        aria-describedby="emailHelp"
+                        placeholder="Nom de votre voyage"
+                        name="travelName" required/>
           <div class="input-group">
-            <input type="text" class="form-control" />
-            <input type="text" class="form-control" />
-            <input type="date" class="form-control" />
-            <input type="date" class="form-control" />
+            
+            <input type="text" class="form-control" v-model="departureCity"
+                        id="start-city"
+                        aria-describedby="Ville de départ"
+                        placeholder="Ville de départ"
+                        name="departureCity" required />
+            <input type="date" class="form-control" v-model="departureDate"
+                        id="start-at"
+                        aria-describedby="Date de départ"
+                        placeholder="Date de début"
+                        name="departureDate" required/>
+            <input type="date" class="form-control" v-model="arrivedDate"
+                        id="end-at"
+                        aria-describedby="emailHelp"
+                        placeholder="Date de fin"
+                        name="arrivedDate" required/>
+            <input type="text" class="form-control" v-model="arrivedCity"
+                        id="arrived-city"
+                        aria-describedby="emailHelp"
+                        placeholder="Ville d'arrivée"
+                        name="arrivedCity" required />
           </div>
-          <a href="" class="add-destination">+ Ajouter une destination</a>
           <div class="row">
             <div class="col">
-              <a href="/my-trip" class="btn btn-primary btn-create-trip"> Créer mon voyage </a>
-            </div>
-            <div class="col">
-              <select class="form-control select-people">
-                <option>1</option>
-                <option>2</option>
-              </select>
+              <button type="submit" class="btn btn-primary btn-create-trip"> Créer mon voyage </button>
             </div>
           </div>
         </form>
@@ -229,12 +244,41 @@ export default {
       test: "test"
     };
   },
+  methods: {
+    async persistUser() {
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json", 'Authorization': 'Bearer '+localStorage.bearer, },
+        body: JSON.stringify({
+          travelName: this.travelName,
+          departureCity: this.departureCity,
+          departureDate: this.departureDate,
+          arrivedCity: this.arrivedCity,
+          arrivedDate: this.arrivedDate,
+        }),
+      };
+      const truc = await fetch(
+        "http://localhost:3000/travel",
+        requestOptions
+      );
+      const data = await truc.json();
+      console.log(data);
+      if (data.state == "ok") {
+        this.$router.push("/mon-voyage");
+      } else {
+        alert(data.message);
+      }
+    },
+  },
   
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.home{
+  padding-bottom: 80px  ;
+}
 .btn-primary {
   background-color: #679436;
   border-color: #679436;
