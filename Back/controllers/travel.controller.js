@@ -35,16 +35,16 @@ function getTravels(req, res)
 
 async function getTravelById(req, res)
 {
-    const travelName = req.body.travelName ?? null;
+    const travelId = req.body.travelId ?? null;
 
     const travel = await models.Travel.findOne({
-        where: {name: travelName},
+        where: {id: travelId},
         include: [{
             model: models.User,
             where: {id: req.auth.userId},
             attributes: [],
         },
-            models.Transport,   
+            models.Destination,
             models.Eat,
             models.Sleep,
             models.Activity
@@ -91,7 +91,7 @@ async function shareTravel(req, res)
     if (!travel) {
         return res.status(404).json({
             state: "error",
-            message: 'Ce voyage n\'est pas dans votre liste !',
+            message: 'Ce voyage n\'est pas dans votre liste de voyage !',
             data: null
         });
     }
@@ -111,15 +111,15 @@ async function shareTravel(req, res)
 
     const newSharedTravel = await user.addTravel(travel, { through: models.UserTravel });
 
-    if (newSharedTravel == 0){
-        res.status(404).json({
+    if (newSharedTravel === null){
+        return res.status(404).json({
             state: "error",
             message: "Echec du partage de voyage ou voyage déjà partagée",
             data: null
         });
     }
 
-    res.status(201).json({
+    return res.status(201).json({
         state: "ok",
         message: "Voyage partagé avec succès",
         data: newSharedTravel
@@ -130,17 +130,17 @@ async function createTravel(req, res)
 {
     var travelName;
 
-    var startCity;
-    var startAt;
+    var departureCity;
+    var departureDate;
 
     var arrivedCity;
-    var endAt;
+    var arrivedDate;
 
     req.body.travelName !== undefined ? travelName = req.body.travelName : travelName = null;
-    req.body.startCity !== undefined ? startCity = req.body.startCity : startCity = null;
-    req.body.startAt !== undefined ? startAt = req.body.startAt : startAt = null;
+    req.body.departureCity !== undefined ? departureCity = req.body.departureCity : departureCity = null;
+    req.body.departureDate !== undefined ? departureDate = req.body.departureDate : departureDate = null;
     req.body.arrivedCity !== undefined ? arrivedCity = req.body.arrivedCity : arrivedCity = null;
-    req.body.endAt !== undefined ? endAt = req.body.endAt : endAt = null;
+    req.body.arrivedDate !== undefined ? arrivedDate = req.body.arrivedDate : arrivedDate = null;
 
 
     const userAuth = await models.User.findByPk(req.auth.userId, {
@@ -161,36 +161,45 @@ async function createTravel(req, res)
         });
     }
 
-
+// Les dates de début et de fin du travel défini ici doivent etre modifié selon les destination ajouté ou supprimé
     const newTravel = await models.Travel.create({
         name: travelName,
-        startDate: startAt,
-        endDate: endAt,
+        startDate: departureDate,
+        endDate: arrivedDate,
     });
 
     const addedTravel = await userAuth.addTravel(newTravel, { through: models.UserTravel });
 
-    const newTransport = await models.Transport.create({
-        startCity: startCity,
-        startAt: startAt,
+    const newDestination = await models.Destination.create({
+        departureCity: departureCity,
+        departureDate: departureDate,
         arrivedCity: arrivedCity,
-        arrivedAt: endAt
+        arrivedDate: arrivedDate
     });
 
-    const addedTransport = await newTravel.addTransport(newTransport);
+    const addedDestination = await newTravel.addDestination(newDestination);
 
-    if (addedTravel == 0){
-        res.status(404).json({
+    if (addedTravel === null){
+        return res.status(404).json({
             state: "error",
             message: "Echec de création du voyage",
             data: null
         });
     }
 
-    res.status(404).json({
+    if (addedDestination === null)
+    {
+        return res.status(404).json({
+            state: "error",
+            message: "Echec d'ajout de la destination",
+            data: null
+        });
+    }
+
+    return res.status(404).json({
         state: "ok",
         message: "Voyage crée avec succès",
-        data: newTransport
+        data: addedDestination
     });
 }
 

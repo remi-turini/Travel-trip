@@ -10,16 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Transport.belongsTo(models.Travel)
+      Transport.belongsTo(models.Destination);
     }
   }
   Transport.init({
-    travelId: DataTypes.INTEGER,
+    destinationId: DataTypes.INTEGER,
     type: DataTypes.STRING,
     duration: DataTypes.FLOAT,
-    startCity: DataTypes.STRING,
-    arrivedCity: DataTypes.STRING,
-    startAt: DataTypes.DATE,
+    departureAt: DataTypes.DATE,
     arrivedAt: DataTypes.DATE,
     price: DataTypes.FLOAT,
     reserved: DataTypes.BOOLEAN

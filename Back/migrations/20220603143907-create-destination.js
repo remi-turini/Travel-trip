@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Transport', {
+    await queryInterface.createTable('Destination', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -16,15 +16,7 @@ module.exports = {
           key: 'id',
         },
       },
-      type: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
-      duration: {
-        allowNull: true,
-        type: Sequelize.FLOAT
-      },
-      startCity: {
+      departureCity: {
         allowNull: true,
         type: Sequelize.STRING
       },
@@ -32,25 +24,17 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING
       },
-      startAt: {
+      departureDate: {
         allowNull: true,
         type: Sequelize.DATE
       },
-      arrivedAt: {
+      arrivedDate: {
         allowNull: true,
         type: Sequelize.DATE
-      },
-      price: {
-        allowNull: true,
-        type: Sequelize.FLOAT
-      },
-      reserved: {
-        allowNull: true,
-        type: Sequelize.BOOLEAN
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Transport');
+    await queryInterface.dropTable('Destination');
   }
 };

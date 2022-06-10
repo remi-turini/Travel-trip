@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'travelId'
       });
 
-      Travel.hasMany(models.Transport, {
+      Travel.hasMany(models.Destination, {
         foreignKey: 'travelId'
       });
 
@@ -44,10 +44,6 @@ module.exports = (sequelize, DataTypes) => {
     freezeTableName: true,
     timestamps: false
   });
-
-  Travel.prototype.getId = function () {
-    return this.getDataValue('id');
-  };
 
   return Travel;
 };

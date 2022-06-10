@@ -87,7 +87,7 @@ async function updateUser(req, res)
     models.User.findOne({ where: {id: req.auth.userId} })
         .then(user => {
             if(!user){
-                res.status(404).json({
+                return res.status(404).json({
                     state: "error",
                     message: "L'utilisateur spécifié n'existe pas",
                     data: null
@@ -124,7 +124,7 @@ async function deleteUser(req, res)
     const user = await models.User.findOne({where: {id: req.auth.userId}})
 
     if(!user) {
-        res.status(404).json({
+        return res.status(404).json({
             state: "error",
             message: "Cet utilisateur n'existe pas",
             data: null
@@ -133,7 +133,7 @@ async function deleteUser(req, res)
 
     await user.destroy();
 
-    res.status(200).json({
+    return res.status(200).json({
         state: "ok",
         message: "Utilisateur supprimé avec succèes",
         data: null
