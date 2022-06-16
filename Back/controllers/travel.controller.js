@@ -33,12 +33,12 @@ function getTravels(req, res)
 
 }
 
-async function getTravelById(req, res)
+async function getTravelByName(req, res)
 {
-    const travelId = req.body.travelId ?? null;
+    const travelName = req.body.travelName ?? null;
 
     const travel = await models.Travel.findOne({
-        where: {id: travelId},
+        where: {name: travelName},
         include: [{
             model: models.User,
             where: {id: req.auth.userId},
@@ -215,7 +215,7 @@ async function test(req, res) {
 
 module.exports = {
     getTravels: getTravels,
-    getTravelById: getTravelById,
+    getTravelByName: getTravelByName,
     shareTravel: shareTravel,
     createTravel: createTravel,
     test: test,
