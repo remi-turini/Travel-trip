@@ -18,7 +18,7 @@ async function setAirplanesByCities(req, res)
         });
     }
 
-    if(destination.getTransport() !== null)
+    if(await destination.getTransport() !== null)
     {
         return res.status(404).json({
             state: "error",
