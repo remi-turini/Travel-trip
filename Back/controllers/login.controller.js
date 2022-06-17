@@ -27,13 +27,16 @@ function login(req, res, next)
                             data: null
                         });
                     }
+
+                    const token = jwt.sign({userId: user.id}, 'secret_key', {expiresIn: '24h'})
+
                     res.status(200).json({
-                        userId: user.id,
-                        token: jwt.sign(
-                            { userId: user.id },
-                            'secret_key',
-                            { expiresIn: '24h' }
-                        )
+                        state: "ok",
+                        message: "Connexion effectuée avec succès",
+                        data: {
+                            userId: user.id,
+                            token: token
+                        }
                     });
                 })
                 .catch(error => res.status(500).json({
