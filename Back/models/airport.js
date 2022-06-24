@@ -19,7 +19,9 @@ module.exports = (sequelize, DataTypes) => {
         cityCode: DataTypes.STRING,
         cityName: DataTypes.STRING,
         countryName: DataTypes.STRING,
-        countryCode: DataTypes.STRING
+        countryCode: DataTypes.STRING,
+        lat: DataTypes.STRING,
+        lon: DataTypes.STRING,
     }, {
         sequelize,
         modelName: 'Airport',

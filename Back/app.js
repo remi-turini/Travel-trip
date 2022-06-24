@@ -8,6 +8,7 @@ const loginRoute = require("./routes/login");
 const travelRoute = require("./routes/travel");
 const transportRoute = require("./routes/transport");
 const destinationRoute = require("./routes/destination");
+const harRoute = require("./routes/har");
 
 app.use(bodyParser.json(), cors());
 
@@ -16,5 +17,6 @@ app.use("/user", userRoute);
 app.use("/travel", travelRoute);
 app.use("/transport", transportRoute);
 app.use("/destination", destinationRoute);
+app.use("/har", harRoute);
 
 module.exports = app;

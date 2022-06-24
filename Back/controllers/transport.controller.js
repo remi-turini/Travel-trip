@@ -4,8 +4,8 @@ const axios = require('axios');
 async function setAirplanesByCities(req, res)
 {
     const destinationId = req.body.destinationId ?? null;
-    const departureCity = req.body.departureCity ?? null;
-    const arrivedCity = req.body.arrivedCity ?? null;
+    // const departureCity = req.body.departureCity ?? null;
+    // const arrivedCity = req.body.arrivedCity ?? null;
 
     const destination = await models.Destination.findByPk(destinationId);
 
@@ -28,12 +28,12 @@ async function setAirplanesByCities(req, res)
     }
 
     var departureCityAirports = await models.Airport.findAll({
-        where: {cityName: departureCity},
+        where: {cityName: destination.departureCity},
         attributes: ['code', 'name', 'cityName', 'countryName']
     });
 
     var arrivedCityAirports = await models.Airport.findAll({
-        where: {cityName: arrivedCity},
+        where: {cityName: destination.arrivedCity},
         attributes: ['code', 'name', 'cityName', 'countryName']
     });
 
@@ -41,7 +41,7 @@ async function setAirplanesByCities(req, res)
         // departureCityAirports = "Aucun résultat";
         return res.status(404).json({
             state: "error",
-            message: "Aucun aéroport disponible dans la ville : " + departureCity,
+            message: "Aucun aéroport disponible dans la ville : " + destination.departureCity,
             data: null
         });
     }
@@ -50,7 +50,7 @@ async function setAirplanesByCities(req, res)
         // arrivedCityAirports = "Aucun résultat";
         return res.status(404).json({
             state: "error",
-            message: "Aucun aéroport disponible dans la ville : " + arrivedCity,
+            message: "Aucun aéroport disponible dans la ville : " + destination.arrivedCity,
             data: null
         });
     }

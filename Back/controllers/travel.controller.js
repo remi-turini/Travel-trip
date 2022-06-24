@@ -1,6 +1,6 @@
 const models = require("../models");
 
-function getTravels(req, res)
+async function getTravels(req, res)
 {
     models.Travel.findAll({
         include: {
@@ -11,7 +11,7 @@ function getTravels(req, res)
         }
     })
         .then(travels => {
-            if (!travels) {
+            if (travels.length === 0) {
                 return res.status(404).json({
                     state: "error",
                     message: "Aucun voyage",
@@ -44,7 +44,12 @@ async function getTravelByName(req, res)
             where: {id: req.auth.userId},
             attributes: [],
         },
-            models.Destination,
+            {
+                model: models.Destination,
+                include: [{
+                    model: models.Transport
+                }]
+            },
             models.Eat,
             models.Sleep,
             models.Activity
