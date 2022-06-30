@@ -20,7 +20,7 @@ async function allByCity(req, res)
         });
     }
 
-    var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+ cities[0].lat +","+ cities[0].lon +"&radius=50000&type=&keyword="+ keyWord +"&key=AIzaSyDUpndmhQqRkr2EAy_2ZVbh5irpHXP0tFY"
+    var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+ cities[0].lat +","+ cities[0].lon +"&radius=15000&type=&keyword="+ keyWord +"&key=AIzaSyDUpndmhQqRkr2EAy_2ZVbh5irpHXP0tFY"
 
     try {
         var multipleResult = await axios({

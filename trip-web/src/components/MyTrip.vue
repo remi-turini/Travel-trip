@@ -17,6 +17,7 @@
           <div class="col">
             <ul v-for="item in travels.Destinations" :key="item.id">
               <li>{{ item.departureCity }}</li>
+              <i class="bi bi-arrow-right"></i>
               <li>{{ item.arrivedCity }}</li>
             </ul>
             <button class="btn btn-primary">+ Ajout d'une destination</button>
@@ -28,6 +29,11 @@
               map-type-id="terrain"
               style="width: 500px; height: 300px"
             >
+              <GMapMarker
+                  :key="index"
+                  v-for="(m, index) in markers"
+                  :position="m.position"
+              />
             </GMapMap>
           </div>
         </div>
@@ -36,40 +42,17 @@
     <section class="reservation">
       <div class="container">
         <div class="row">
-          <div class="col-4">
-            <p class="month-date-travel">AVRIL</p>
+          <h2 class="h4 col-auto">Mes suggestions</h2>
+        </div>
+        <div class="d-flex hotels" style="overflow-x: scroll">
+          <div class="col-auto" v-for="item in hotels" :key="item.id">
             <ul>
-              <li>18</li>
-              <li>19</li>
-              <li>20</li>
-              <li>21</li>
-              <li>22</li>
-              <li>23</li>
-              <li>24</li>
-              <li>25</li>
+              <li>{{ item.name }}</li>
+              <img :src=item.photo>
             </ul>
           </div>
-          <div class="col-8">
-            <p>{{ travels.Destinations[0].departureCity }}</p>
-            <p>{{ travels.Destinations[0].arrivedCity }}</p>
-            <div class="hotel">
-              <div class="container">
-                <div class="row">
-                  <div class="col">
-                    <ul v-for="item in hotels" :key="item.id">
-                      <li>{{ item.data.name }}</li>
-                      <li>{{ item.data.photo }}</li>
-                      <img :src=item.data.photo>
-                    </ul>
-                    <button class="btn btn-primary">
-                      + Ajout d'une destination
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
+
       </div>
     </section>
   </div>
@@ -87,45 +70,27 @@ export default {
   data() {
     return {
       travels: {},
+      hotels: {},
       center: { lat: 51.093048, lng: 6.84212 },
+      markers: [
+        {
+          position: {
+            lat: 51.093048, lng: 6.842120
+          },
+        },
+        {
+          position: {
+            lat: 53.093048, lng: 6.842120
+          },
+        }
+      ]
     };
   },
 
   created() {
-    this.suggestionHotel();
     this.fetchTravels();
   },
   methods: {
-    async suggestionHotel() {
-      
-      const requestOptionsHotel = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.bearer,
-        },
-        body: JSON.stringify({
-          cityName: "Marseille",
-          keyWord: "hotel",
-        }),
-      };
-      try {
-        var urlhotel = "http://localhost:3000/har";
-        console.log("pipi");
-        const res3 = await fetch(urlhotel, requestOptionsHotel);
-        const datahotel = await res3.json();
-        if (datahotel.state == "ok") {
-          var newData = JSON.parse(JSON.stringify(datahotel));
-          this.hotels = newData.data;
-          console.log("caca");
-        } else {
-          console.log(res3.message);
-          console.log("pipi");
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
     async fetchTravels() {
       const requestOptions2 = {
         method: "POST",
@@ -146,6 +111,11 @@ export default {
           var newData = JSON.parse(JSON.stringify(data1));
           this.travels = newData.data;
           console.log(newData.data);
+          for (const gps in newData.data.Destinations)
+          {
+            console.log(gps);
+          }
+          // await this.suggestionHotel();
         } else {
           console.log(res1.message);
         }
@@ -153,7 +123,50 @@ export default {
         console.log(error);
       }
     },
+    async suggestionHotel() {
+      console.log(this.travels.Destinations);
+      const requestOptionsHotel = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.bearer,
+        },
+        body: JSON.stringify({
+          cityName: this.travels.Destinations[0].arrivedCity,
+          keyWord: "hotel",
+        }),
+      };
+      try {
+        var urlhotel = "http://localhost:3000/har";
 
+        const res3 = await fetch(urlhotel, requestOptionsHotel);
+        const datahotel = await res3.json();
+        if (datahotel.state == "ok") {
+          var newData = JSON.parse(JSON.stringify(datahotel));
+          this.hotels = newData.data;
+        } else {
+          console.log(res3.message);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    getMarkers() {
+      // generating markers for site map
+      var markers = [];
+      // remove this after lat long received from api.
+      const tempLatLong = [
+        { lat: 51.093048, lng: 6.84212 },
+        { lat: 37.9168362, lng: -122.076972 },
+      ];
+      for(let i=0;i<tempLatLong.length;i++){
+        markers.push({
+          position: tempLatLong[i],
+          title: 'test title'
+        });
+      }
+      return markers;
+    },
     //jspdf does not include the bootstrap style layout
     download() {
       var pdf = new jsPDF();
@@ -229,5 +242,8 @@ export default {
   padding-top: 50px;
   background-color: whitesmoke;
   min-height: 500px;
+}
+.reservation .hotels img {
+  height: 250px;
 }
 </style>
