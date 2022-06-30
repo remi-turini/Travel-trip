@@ -9,6 +9,6 @@ import VueGoogleMaps from '@fawmi/vue-google-maps'
 
 createApp(App).use(router).use(VueGoogleMaps, {
     load: {
-        key: 'AIzaSyApOfF7yGbMxsi0cPlqOEES6j9qIY3j_6Y',
+        key: 'AIzaSyAJ--TiFm_qi81Yc6A-yqY_mjb9bXU8Z7g',
     },
 }).mount('#app')

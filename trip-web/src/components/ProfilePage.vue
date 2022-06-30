@@ -1,78 +1,75 @@
 <template>
   <section class="pt-5">
-    <div class="container pb-8 h-100">
-      <div v-if="bearer !== null" class="row d-flex justify-content-center align-items-center h-100">
+    <div class="container pb-8">
+      <div class="row d-flex justify-content-center align-items-center">
         <div class="col col-xl-10">
-          <div class="card" style="border-radius: 1rem">
+          <div class="">
             <div class="row g-0">
-              <div
-                class="col-md-5 col-lg-5 d-none d-md-block block-date-profile"
-              >
-                <img
-                  class="rounded mt-2 img-fluid px-5 p-4"
-                  src="https://image.freepik.com/vecteurs-libre/avatar-personnes-modernes-dans-vetements-decontractes-illustration-dessin-anime-vecteur-homme-visage-cheveux-individuels-dans-cadre-numerique-clair-ordinateur-bleu-fonce-photo-pour-profil-web_107791-4258.jpg"
-                />
-                <div><span class="font-weight-bold w-100">{{data.firstname}} {{data.lastname}}</span></div>
-                <span class="text-black-50">{{data.email}}</span
-                ><span> </span>
+              <div class="col-md-8 col-lg-8 d-none d-md-block login-image">
+                <h1>Bienvenue sur ton profil <br/> {{user.firstname}} {{user.lastname}}</h1>
+                <div class="row">
+                  <div class="col-md-6 login-text">
+                    <p>
+                      Modifie tes informations.<br />Et clique sur le bouton "Enregister" tout simplement.
+                      
+                    </p>
+                  </div>
+                  <div class="col-md-6">
+                    <img
+                      src="../assets/register-img.png"
+                      alt="login form"
+                      class="img-fluid"
+                      style="border-radius: 1rem 0 0 1rem"
+                    />
+                  </div>
+                </div>
               </div>
-              <div class="col-md-7 col-lg-7 d-flex align-items-center block-data-user">
-                <div class="card-body p-4 p-md-5 p-lg-5 text-black">
-                  <h2 class="text-right fw-bold">Profil</h2>
-                  <form>
-                    <div class="row mt-2 py-2">
-                      <div class="col-md-6">
-                        <label class="labels float-start">Lastname</label
-                        ><input
-                          type="text"
-                          class="form-control"
-                          :placeholder="`${data.lastname}`"
-                          value=""
-                        />
-                      </div>
-                      <div class="col-md-6">
-                        <label class="labels float-start">Firstname</label
-                        ><input
-                          type="text"
-                          class="form-control"
-                          value=""
-                         :placeholder="`${data.firstname}`"
-                        />
-                      </div>
-                    </div>
-                    <div class="col-md-12 py-2">
-                      <label class="labels float-start">Email</label
-                      ><input
-                        type="email"
-                        class="form-control"
-                        :placeholder="`${data.email}`"
-                        value=""
-                      />
-                    </div>
-                    <div class="col-md-12 py-2">
-                      <label class="labels float-start">Favorite crypto</label
-                      ><input
+              <div
+                class="col-md-4 col-lg-4 d-flex align-items-center form-login"
+              >
+                <div class="card-body p-4 p-lg-5 text-black">
+                  <form @submit.prevent="persistUser">
+                    <div class="mb-3">
+                      <input
+                        v-model="lastname"
                         type="text"
                         class="form-control"
-                        value=""
-                        placeholder="Bitcoin"
+                        id="exampleInputEmail1"
+                        aria-describedby="emailHelp"
+                        :placeholder="user.lastname"
+                        name="lastname" required
                       />
                     </div>
-                    <div class="col-md-12 py-2">
-                      <label class="labels float-start">Password</label
-                      ><input
-                        type="password"
+                    <div class="mb-3">
+                      <input
+                        v-model="firstname"
+                        type="text"
                         class="form-control"
-                        placeholder=""
-                        value=""
+                        id="exampleInputEmail1"
+                        aria-describedby="emailHelp"
+                        :placeholder="user.firstname"
+                        name="firstname" required
                       />
                     </div>
-                    <button
-                      class="btn btn-dark btn-lg btn-block my-4"
-                      type="button"
-                    >
-                      Save
-                    </button>
+                    <div class="mb-3">
+                      <input
+                        v-model="email"
+                        type="email"
+                        class="form-control"
+                        id="exampleInputEmail1"
+                        aria-describedby="emailHelp"
+                        :placeholder="user.email"
+                        name="email" required
+                      />
+                    </div>
+                    <div class="pt-1 mb-4">
+                      <button
+                        class="btn btn-dark btn-lg btn-block"
+                        type="submit"
+                      >
+                        Enregister
+                      </button>
+                    </div>
                   </form>
                 </div>
               </div>
@@ -80,44 +77,77 @@
           </div>
         </div>
       </div>
-      <div v-else>
-        <p>To access your profile please login</p>
-        <a href="/register">I don't have an account yet </a>
-      </div>
     </div>
   </section>
 </template>
+
 <script>
+import { notify } from "@kyvg/vue3-notification";
 export default {
   name: "App",
   data() {
     return {
-      data: {},
-      bearer: localStorage.bearer
+      user: {},
     };
   },
   created() {
-    this.fetchData();
+    this.getUser();
   },
   methods: {
-    async fetchData() {
-      var bearer = localStorage.getItem('bearer');
-      
-      if(localStorage.bearer != null){
-        var url = "localhost:3000/user";
-      const requestOptions = {
-        method: "GET",
-        headers: {
-                'Authorization': 'Bearer '+bearer,
-            }
-      };
-      const res = await fetch(url, requestOptions);
-      const data = await res.json();
-      this.data = data;
-      console.log(data)
+    async getUser() {
+      try {
+        const requestOptions2 = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.bearer,
+          },
+        };
+        var url2 = "http://localhost:3000/user";
+        requestOptions2;
+        const res1 = await fetch(url2, requestOptions2);
+        const data1 = await res1.json();
+        if (data1.state == "ok") {
+          var newData = JSON.parse(JSON.stringify(data1));
+          this.user = newData.data;
+          console.log("prout");
+        } else {
+          console.log("prout2");
+        }
+      } catch (error) {
+        console.log(error);
       }
-      else{
-        console.log("nope");
+    },
+    async persistUser() {
+      const requestOptions = {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.bearer,
+          },
+        body: JSON.stringify({
+          email: this.email,
+          firstname: this.firstname,
+          lastname: this.lastname,
+          
+        }),
+      };
+      try {
+        const truc = await fetch(
+        "http://localhost:3000/user",
+        requestOptions
+        );
+        const data = await truc.json();
+        if (data.state == "ok")
+        {
+          notify(
+          alert(data.message)
+        );
+        } else {
+          console.log(data.message);
+        }
+      } catch(error) {
+        console.log(error);
       }
     },
   },
@@ -128,9 +158,50 @@ export default {
 body {
   background-color: #fdfeff;
 }
+h1{
+      font-size: 3.5rem;
+}
+button{
+      width: -webkit-fill-available;
+}
+a{
+  text-decoration: none;
+}
+input{
+      padding: 15px 20px;
+    border: none;
+    background-color: #0080001a;
+}
 section {
   background-color: #fdfeff;
-  padding-bottom: 200px;
+  padding-bottom: 50px;
+
+}
+.login-image {
+  background: white;
+  padding-top: 20px;
+  border-radius: 10px 0px 0px 10px;
+}
+.divider{
+  margin-bottom: 10px;
+    padding: 0;
+    overflow: visible;
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    color: #6e6d7a;
+    text-align: center;
+}
+.divider:after {
+    content: 'Ou connectez-vous avec';
+    display: inline-block;
+    position: relative;
+    top: -13px;
+    padding: 0 16px;
+    background: #fff;
+}
+.login-text{
+    font-size: 20px;
+    padding-top: 50px;
 }
 .theme-dark section {
   background-color: #1c1d24;
@@ -148,29 +219,17 @@ section {
 .theme-dark .card .card-body a {
   color: rgb(234, 236, 239) !important;
 }
-.container {
-  width: fit-content;
-}
-.block-date-profile {
-  background-color: white;
-  border-radius: 10px 0px 0px 10px;
-  padding-top: 60px;
-}
-.block-date-profile span{
-  color: grey !important;;
-}
-.block-data-user{
-  background-color: #adb5bd26;
-  border-radius: 0px 10px 10px 0px;
-}
 .btn-dark {
-  background-color: #db7609;
-  border-color: #ef820d;
+  background-color: #679436;
+  border-color: #679436;
 }
 .btn-dark:hover,
 .btn-dark:focus,
 .btn-dark:active {
-  background-color: #db7609;
-  border-color: #db7609;
+  background-color: #679436;
+  border-color: #679436;
+}
+.form-login {
+  border-radius: 0px 10px 10px 0px;
 }
 </style>

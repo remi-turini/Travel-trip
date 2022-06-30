@@ -71,7 +71,6 @@
 </template>
 
 <script>
-import { notify } from "@kyvg/vue3-notification";
 export default {
   beforeMount() {},
   methods: {
@@ -84,17 +83,21 @@ export default {
           password: this.password,
         }),
       };
-      const res = await fetch("http://localhost:3000/login", requestOptions);
-      const data = await res.json();
-      if (data.token != null) {
-        localStorage.setItem("bearer", data.token);
-        localStorage.setItem("id", data.userId);
+      try {
+        const res = await fetch("http://localhost:3000/login", requestOptions);
+        const data = await res.json();
+        console.log(data);
+        if (data.data.token != null)
+        {
+          localStorage.setItem("bearer", data.data.token);
+          localStorage.setItem("id", data.data.userId);
 
-        this.$router.go("/");
-      } else {
-        notify(
-          "Password or email wrong, try again or try to create a new accout"
-        );
+          this.$router.go("/");
+        } else {
+          console.log(data.message);
+        }
+      } catch(error) {
+        console.log(error);
       }
     },
   },

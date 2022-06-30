@@ -3,7 +3,6 @@ import Home from '@/components/Home.vue'
 import Connexion from '@/components/LoginAuth.vue'
 import Inscription from '@/components/RegisterAuth.vue'
 import MyTrip from '@/components/MyTrip.vue'
-import MyTrips from '@/components/MyTrips.vue'
 import Profile from '@/components/ProfilePage.vue'
 
 const routes = [
@@ -27,11 +26,6 @@ const routes = [
         name: 'MesVoyages',
         component: MyTrip,
         props:true
-    },
-    {
-        path: '/mes-voyages',
-        name: 'MyTrips',
-        component: MyTrips
     },
     {
         path: '/profil',

@@ -118,18 +118,22 @@ export default {
           
         }),
       };
-      const truc = await fetch(
+      try {
+        const truc = await fetch(
         "http://localhost:3000/user",
         requestOptions
-      );
-      const data = await truc.json();
-      const response = data.error;
-      if (response && response.statuts >= 400 && response.status < 405) {
-        notify(
+        );
+        const data = await truc.json();
+        if (data.state == "ok")
+        {
+          notify(
           alert("Bienvenue")
         );
-      } else {
-        alert("Email already used, try to log in or a different email.");
+        } else {
+          console.log(data.message);
+        }
+      } catch(error) {
+        console.log(error);
       }
     },
   },

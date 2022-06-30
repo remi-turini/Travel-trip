@@ -19,14 +19,6 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav ms-auto">
-              <li v-if="bearer != null" class="nav-item">
-                <router-link
-                  to="/mes-voyages"
-                  class="dot home nav-link"
-                  aria-current="page"
-                  >Mes voyages</router-link
-                >
-              </li>
               <li v-if="bearer == null" :key="index" class="nav-item">
                 <router-link class="nav-link" to="/connexion"
                   >Connexion</router-link
@@ -131,7 +123,7 @@ export default {
         var newData = JSON.parse(JSON.stringify(data1));
         this.travels = newData.data;
       } else {
-        alert(res1.message);
+        console.logo(res1.message);
       }
     },
   },
