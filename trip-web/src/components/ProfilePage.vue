@@ -10,7 +10,8 @@
                 <div class="row">
                   <div class="col-md-6 login-text">
                     <p>
-                      Modifie tes informations.<br />Et clique sur le bouton "Enregister" tout simplement.
+                      Pour éditer ton profil :
+                      <br/>Modifie tes informations et clique sur le bouton "Enregister" tout simplement.
                       
                     </p>
                   </div>

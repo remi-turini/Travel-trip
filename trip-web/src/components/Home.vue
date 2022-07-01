@@ -123,7 +123,7 @@
                   <div class="modal-content">
                     <div class="modal-header">
                       <h5 class="modal-title" id="exampleModalLabel">
-                        Partage du voyage : {{ item.name }} {{item.id}}
+                        Partage du voyage : {{ item.name }}
                       </h5>
                       <button
                         type="button"
@@ -193,11 +193,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </section>
-    <section class="why">
-      <div class="container">
-        <h2 class="h4">Pour planifier votre voyage chez nous ?</h2>
       </div>
     </section>
   </div>
@@ -432,5 +427,12 @@ section h2 {
 .card-trip h2 {
   font-size: 27px;
   color:#679436;
+}
+#share-user{
+  display: flex;
+  flex-direction: column;
+}
+#share-user input{
+  margin-bottom: 20px;
 }
 </style>

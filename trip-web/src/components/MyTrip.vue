@@ -2,7 +2,7 @@
   <div class="my-trip" ref="content">
     <section class="title">
       <div class="container">
-        <h1 class="h3 title-trip">{{ travels.name }}</h1>
+        <h1 class="h1 title-trip">{{ travels.name }}</h1>
         <p class="title-date">
           {{ dateTime(travels.startDate) }} - {{ dateTime(travels.endDate) }}
         </p>
@@ -15,11 +15,10 @@
       <div class="container">
         <div class="row">
           <div class="col">
-            <ul v-for="item in travels.Destinations" :key="item.id">
-              <li>{{ item.departureCity }}</li>
-              <i class="bi bi-arrow-right"></i>
-              <li>{{ item.arrivedCity }}</li>
-            </ul>
+            <div class="destination" v-for="item in travels.Destinations" :key="item.id">
+              <span class="h5">{{ item.departureCity }} > {{ item.arrivedCity }}</span>
+              <button class="btn btn-primary" :id=item.id>Décollage</button>
+            </div>
             <button class="btn btn-primary">+ Ajout d'une destination</button>
           </div>
           <div class="col">
@@ -30,9 +29,9 @@
               style="width: 500px; height: 300px"
             >
               <GMapMarker
-                  :key="index"
-                  v-for="(m, index) in markers"
-                  :position="m.position"
+                :key="index"
+                v-for="(m, index) in markers"
+                :position="m.position"
               />
             </GMapMap>
           </div>
@@ -41,18 +40,25 @@
     </section>
     <section class="reservation">
       <div class="container">
-        <div class="row">
-          <h2 class="h4 col-auto">Mes suggestions</h2>
-        </div>
-        <div class="d-flex hotels" style="overflow-x: scroll">
+        <h2 class="h2">Mes suggestions</h2>
+        <h3 class="h3 text-center">Hôtels</h3>
+        <div class="d-flex hotels suggestions-section" style="overflow-x: scroll">
           <div class="col-auto" v-for="item in hotels" :key="item.id">
-            <ul>
-              <li>{{ item.name }}</li>
-              <img :src=item.photo>
-            </ul>
+              <h4 class="h5">{{ item.name }}</h4>
+              <img :src="item.photo" />
+              <button class="btn btn-primary">Choisir</button>
           </div>
         </div>
-
+      </div>
+      <div class="container">
+        <h3 class="h3 text-center">Restaurants</h3>
+        <div class="d-flex restaurants suggestions-section" style="overflow-x: scroll">
+          <div class="col-auto" v-for="item in restaurants" :key="item.id">
+              <h4 class="h5">{{ item.name }}</h4>
+              <img :src="item.photo" />
+              <button class="btn btn-primary">Choisir</button>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -71,19 +77,22 @@ export default {
     return {
       travels: {},
       hotels: {},
+      restaurants:{},
       center: { lat: 51.093048, lng: 6.84212 },
       markers: [
         {
           position: {
-            lat: 51.093048, lng: 6.842120
+            lat: 51.093048,
+            lng: 6.84212,
           },
         },
         {
           position: {
-            lat: 53.093048, lng: 6.842120
+            lat: 53.093048,
+            lng: 6.84212,
           },
-        }
-      ]
+        },
+      ],
     };
   },
 
@@ -111,11 +120,11 @@ export default {
           var newData = JSON.parse(JSON.stringify(data1));
           this.travels = newData.data;
           console.log(newData.data);
-          for (const gps in newData.data.Destinations)
-          {
+          for (const gps in newData.data.Destinations) {
             console.log(gps);
           }
-          // await this.suggestionHotel();
+          await this.suggestionHotel();
+          await this.suggestionRestaurant();
         } else {
           console.log(res1.message);
         }
@@ -151,6 +160,34 @@ export default {
         console.log(error);
       }
     },
+    async suggestionRestaurant() {
+      console.log(this.travels.Destinations);
+      const requestOptionsHotel = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.bearer,
+        },
+        body: JSON.stringify({
+          cityName: this.travels.Destinations[0].arrivedCity,
+          keyWord: "restaurant",
+        }),
+      };
+      try {
+        var urlhotel = "http://localhost:3000/har";
+
+        const res3 = await fetch(urlhotel, requestOptionsHotel);
+        const datahotel = await res3.json();
+        if (datahotel.state == "ok") {
+          var newData = JSON.parse(JSON.stringify(datahotel));
+          this.restaurants = newData.data;
+        } else {
+          console.log(res3.message);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     getMarkers() {
       // generating markers for site map
       var markers = [];
@@ -159,10 +196,10 @@ export default {
         { lat: 51.093048, lng: 6.84212 },
         { lat: 37.9168362, lng: -122.076972 },
       ];
-      for(let i=0;i<tempLatLong.length;i++){
+      for (let i = 0; i < tempLatLong.length; i++) {
         markers.push({
           position: tempLatLong[i],
-          title: 'test title'
+          title: "test title",
         });
       }
       return markers;
@@ -242,8 +279,48 @@ export default {
   padding-top: 50px;
   background-color: whitesmoke;
   min-height: 500px;
+  padding-bottom: 100px;
 }
-.reservation .hotels img {
+.reservation h3{
+  padding-top: 30px;
+}
+.reservation .suggestions-section img {
   height: 250px;
+}
+.reservation .suggestions-section .col-auto{
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+}
+.reservation .suggestions-section .col-auto img{
+    border-radius: 10px;
+}
+.reservation .suggestions-section .col-auto .btn-primary{
+  border-radius: 20px;
+    width: 200px;
+    margin: auto;
+    margin-top: 20px;
+}
+.reservation .suggestions-section .col-auto .btn-primary:hover{
+    color: #679436;
+    background-color: white;
+    border-color: #679436;
+}
+.reservation .suggestions-section .col-auto .btn-primary:focus{
+    color: #679436;
+    background-color: white;
+    border-color: #679436;
+}
+.resume .col{
+  padding: 50px;
+}
+.resume .destination{
+      display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 10px 0px;
 }
 </style>
