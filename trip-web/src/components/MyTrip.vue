@@ -24,15 +24,19 @@
           <div class="col">
             <GMapMap
               :center="center"
-              :zoom="7"
+              :zoom="5"
               map-type-id="terrain"
               style="width: 500px; height: 300px"
             >
               <GMapMarker
                 :key="index"
-                v-for="(m, index) in markers"
+                v-for="(m, index) in getMarkers()"
                 :position="m.position"
               />
+              <GMapPolyline
+                  :path="path"
+                  :editable="true"
+                  ref="polyline" />
             </GMapMap>
           </div>
         </div>
@@ -75,24 +79,10 @@ export default {
   },
   data() {
     return {
+      path: [],
       travels: {},
       hotels: {},
       restaurants:{},
-      center: { lat: 51.093048, lng: 6.84212 },
-      markers: [
-        {
-          position: {
-            lat: 51.093048,
-            lng: 6.84212,
-          },
-        },
-        {
-          position: {
-            lat: 53.093048,
-            lng: 6.84212,
-          },
-        },
-      ],
     };
   },
 
@@ -125,6 +115,7 @@ export default {
           }
           await this.suggestionHotel();
           await this.suggestionRestaurant();
+          await this.getMarkers();
         } else {
           console.log(res1.message);
         }
@@ -191,17 +182,21 @@ export default {
     getMarkers() {
       // generating markers for site map
       var markers = [];
-      // remove this after lat long received from api.
-      const tempLatLong = [
-        { lat: 51.093048, lng: 6.84212 },
-        { lat: 37.9168362, lng: -122.076972 },
-      ];
+      var path = [];
+      var tempLatLong = [];
+      for (const travelGps of this.travels.Destinations) {
+        if(travelGps.arrivedCityLat !== null && travelGps.arrivedCityLong !== null)
+        tempLatLong.push({lat: travelGps.arrivedCityLat, lng: travelGps.arrivedCityLong });
+      }
       for (let i = 0; i < tempLatLong.length; i++) {
         markers.push({
-          position: tempLatLong[i],
-          title: "test title",
+          position: tempLatLong[i]
         });
+        path.push(tempLatLong[i]);
       }
+      this.center = { lat: this.travels.Destinations[0].arrivedCityLat, lng: this.travels.Destinations[0].arrivedCityLong },
+      this.markers = markers;
+      this.path = path;
       return markers;
     },
     //jspdf does not include the bootstrap style layout
