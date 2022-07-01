@@ -165,6 +165,32 @@
           </div>
         </div>
       </div>
+      <div class="container">
+        <h3 class="h3 text-center">Loisirs</h3>
+        <div
+          class="d-flex loisirs suggestions-section"
+          style="overflow-x: scroll"
+        >
+          <div class="col-auto" v-for="item in loisirs" :key="item.id">
+            <h4 class="h5">{{ item.name }}</h4>
+            <img :src="item.photo" />
+            <button class="btn btn-primary">Choisir</button>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <h3 class="h3 text-center">Bars</h3>
+        <div
+          class="d-flex bars suggestions-section"
+          style="overflow-x: scroll"
+        >
+          <div class="col-auto" v-for="item in bars" :key="item.id">
+            <h4 class="h5">{{ item.name }}</h4>
+            <img :src="item.photo" />
+            <button class="btn btn-primary">Choisir</button>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 </template>
@@ -184,6 +210,8 @@ export default {
       travels: {},
       hotels: {},
       restaurants:{},
+      loisirs:{},
+      bars:{},
     };
   },
 
@@ -217,6 +245,8 @@ export default {
           await this.getMarkers();
           await this.suggestionHotel();
           await this.suggestionRestaurant();
+          await this.suggestionLoisirs();
+          await this.suggestionBars();
         } else {
           console.log(res1.message);
         }
@@ -273,6 +303,62 @@ export default {
         if (datahotel.state == "ok") {
           var newData = JSON.parse(JSON.stringify(datahotel));
           this.restaurants = newData.data;
+        } else {
+          console.log(res3.message);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async suggestionLoisirs() {
+      console.log(this.travels.Destinations);
+      const requestOptionsHotel = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.bearer,
+        },
+        body: JSON.stringify({
+          cityName: this.travels.Destinations[0].arrivedCity,
+          keyWord: "activities",
+        }),
+      };
+      try {
+        var urlhotel = "http://localhost:3000/har";
+
+        const res3 = await fetch(urlhotel, requestOptionsHotel);
+        const datahotel = await res3.json();
+        if (datahotel.state == "ok") {
+          var newData = JSON.parse(JSON.stringify(datahotel));
+          this.loisirs = newData.data;
+        } else {
+          console.log(res3.message);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async suggestionBars() {
+      console.log(this.travels.Destinations);
+      const requestOptionsHotel = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.bearer,
+        },
+        body: JSON.stringify({
+          cityName: this.travels.Destinations[0].arrivedCity,
+          keyWord: "bars",
+        }),
+      };
+      try {
+        var urlhotel = "http://localhost:3000/har";
+
+        const res3 = await fetch(urlhotel, requestOptionsHotel);
+        const datahotel = await res3.json();
+        if (datahotel.state == "ok") {
+          var newData = JSON.parse(JSON.stringify(datahotel));
+          this.bars = newData.data;
         } else {
           console.log(res3.message);
         }
