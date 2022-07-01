@@ -34,7 +34,7 @@
             <div>
               <button
                 type="button"
-                class="btn btn-primary"
+                class="btn btn-primary add-destination"
                 data-bs-toggle="modal"
                 data-bs-target="#exampleModal"
               >
@@ -105,7 +105,7 @@
                           required
                         />
                         <button class="btn btn-primary" type="submit">
-                          Partager
+                          Ajouter
                         </button>
                       </form>
                     </div>
@@ -478,5 +478,19 @@ export default {
 }
 .modal input{
   margin-bottom: 10px;
+}
+.resume .destination .btn-primary{
+  border-color: #679436;
+    background-color: white;
+    color: #679436;
+}
+.add-destination:hover{
+  background-color: #679436;
+}
+.btn-primary:hover{
+  background-color: #679436;
+}
+.btn-primary:focus{
+  background-color: #679436;
 }
 </style>
