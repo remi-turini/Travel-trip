@@ -212,9 +212,9 @@ export default {
           for (const gps in newData.data.Destinations) {
             console.log(gps);
           }
+          await this.getMarkers();
           await this.suggestionHotel();
           await this.suggestionRestaurant();
-          await this.getMarkers();
         } else {
           console.log(res1.message);
         }

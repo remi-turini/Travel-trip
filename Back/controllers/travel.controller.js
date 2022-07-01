@@ -175,10 +175,30 @@ async function createTravel(req, res)
 
     const addedTravel = await userAuth.addTravel(newTravel, { through: models.UserTravel });
 
+    var departureCityGps = await models.Airport.findAll({
+        where: {cityName: departureCity},
+        attributes: ['lat', 'lon']
+    });
+
+    const departureCityLat = departureCityGps.length > 0 ? departureCityGps[0].lat : null;
+    const departureCityLon = departureCityGps.length > 0 ? departureCityGps[0].lon : null;
+
+    var arrivedCityGps = await models.Airport.findAll({
+        where: {cityName: arrivedCity},
+        attributes: ['lat', 'lon']
+    });
+
+    const arrivedCityLat = arrivedCityGps.length > 0 ? arrivedCityGps[0].lat : null;
+    const arrivedCityLon = arrivedCityGps.length > 0 ? arrivedCityGps[0].lon : null;
+
     const newDestination = await models.Destination.create({
         departureCity: departureCity,
+        departureCityLat: departureCityLat,
+        departureCityLong: departureCityLon,
         departureDate: departureDate,
         arrivedCity: arrivedCity,
+        arrivedCityLat: arrivedCityLat,
+        arrivedCityLong: arrivedCityLon,
         arrivedDate: arrivedDate
     });
 
