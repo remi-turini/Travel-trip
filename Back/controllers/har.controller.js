@@ -72,6 +72,8 @@ async function allByCity(req, res)
         // }
         datas.push(data);
         index++;
+        if(index === 5)
+            break;
     }
     // return res.setHeader("Content-Type", 'image/jpeg').setHeader('Content-Disposition', 'inline;filename="unnamed.jpg"').json(datas[0].photo);
 

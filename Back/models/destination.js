@@ -19,7 +19,11 @@ module.exports = (sequelize, DataTypes) => {
   Destination.init({
     travelId: DataTypes.INTEGER,
     departureCity: DataTypes.STRING,
+    departureCityLat: DataTypes.FLOAT,
+    departureCityLong: DataTypes.FLOAT,
     arrivedCity: DataTypes.STRING,
+    arrivedCityLat: DataTypes.FLOAT,
+    arrivedCityLong: DataTypes.FLOAT,
     departureDate: DataTypes.DATE,
     arrivedDate: DataTypes.DATE
   }, {
