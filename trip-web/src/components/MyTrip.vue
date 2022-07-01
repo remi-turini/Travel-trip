@@ -24,12 +24,14 @@
                 >{{ item.departureCity }} > {{ item.arrivedCity }}</span
               >
               <button
+                v-if="item.Transport === null"
                 class="btn btn-primary"
                 id="btn-transport"
-                @onclick="getTransport(item.id)"
+                @click="getTransport(item.id)"
               >
                 Décollage
               </button>
+              <img v-else src="../assets/plane.png" alt="plane" style="height: 40px">
             </div>
             <div>
               <button
@@ -298,7 +300,7 @@ export default {
       this.path = path;
       return markers;
     },
-    async getTransports(id) {
+    async getTransport(id) {
       console.log(id);
       const requestOptions = {
         method: "POST",
@@ -320,9 +322,11 @@ export default {
           console.log("test");
           alert(data.message);
         } else {
+          alert(data.message);
           console.log(data.message);
         }
       } catch (error) {
+        alert("Une erreur interne est survenue");
         console.log(error);
       }
     },
@@ -473,7 +477,7 @@ export default {
 .resume .destination {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   margin: 10px 0px;
 }
 .modal input{

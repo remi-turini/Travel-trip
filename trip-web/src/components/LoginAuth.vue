@@ -85,16 +85,16 @@ export default {
       };
       try {
         const res = await fetch("http://localhost:3000/login", requestOptions);
-        const data = await res.json();
-        console.log(data);
-        if (data.data.token != null)
+        const response = await res.json();
+        if (response.state == "ok")
         {
-          localStorage.setItem("bearer", data.data.token);
-          localStorage.setItem("id", data.data.userId);
+          localStorage.setItem("bearer", response.data.token);
+          localStorage.setItem("id", response.data.userId);
 
           this.$router.go("/");
         } else {
-          console.log(data.message);
+          alert(response.message);
+          console.log(response.message);
         }
       } catch(error) {
         console.log(error);
