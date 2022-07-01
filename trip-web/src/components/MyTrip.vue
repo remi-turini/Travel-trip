@@ -460,25 +460,39 @@ export default {
       //date
       pdf.setFontSize(20);
       pdf.text(
-        this.dateTime(this.travels.startDate) +
+          this.dateTime(this.travels.startDate) +
           " - " +
           this.dateTime(this.travels.endDate),
-        10,
-        30
+          10,
+          30
       );
 
       //destinations
       pdf.setFontSize(15);
-      pdf.text(
-        "Ville de départ : " + this.travels.Destinations[0].departureCity,
-        10,
-        50
-      );
-      pdf.text(
-        "Ville d'arrivée: " + this.travels.Destinations[0].arrivedCity,
-        10,
-        60
-      );
+      var y = 40;
+      for (const destination of this.travels.Destinations)
+      {
+        y+=10;
+        pdf.text(
+            "Ville de départ : " + destination.departureCity,
+            10,
+            y
+        );
+        y+=10;
+        pdf.text(
+            "Ville d'arrivée: " + destination.arrivedCity,
+            10,
+            y
+        );
+        y+=10;
+        for (var i = 30; i < 70; i++)
+        {
+          pdf.text("_",
+              i,
+              y
+          );
+        }
+      }
 
       //footer
       pdf.setFontSize(20);
