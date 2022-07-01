@@ -31,7 +31,12 @@
               >
                 Décollage
               </button>
-              <img v-else src="../assets/plane.png" alt="plane" style="height: 40px">
+              <div v-else class="avion-broum">
+                <img src="../assets/plane.png" alt="plane" style="height: 40px">
+                <p>Prix : {{ item.Transport.price }} €</p>
+                <p>Durée : {{ item.Transport.duration }} min</p>
+              </div>
+
             </div>
             <div>
               <button
@@ -596,5 +601,16 @@ export default {
 }
 .btn-primary:focus{
   background-color: #679436;
+}
+.avion-broum{
+  display: flex;
+  align-items: center;
+}
+.avion-broum p{
+  margin-bottom: 0px;
+  margin-right: 5px;
+}
+.avion-broum img{
+  margin-right: 5px;
 }
 </style>

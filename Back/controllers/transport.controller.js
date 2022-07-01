@@ -1,5 +1,6 @@
 const models = require("../models");
 const axios = require('axios');
+const moment = require('moment');
 
 async function setAirplanesByCities(req, res)
 {
@@ -56,11 +57,13 @@ async function setAirplanesByCities(req, res)
     }
 
     var airplanes = [];
+    var departureDate = moment(destination.departureDate).format("YYYY-MM");
     for (const departureCityAirport of departureCityAirports)
     {
         for (const arrivedCityAirport of arrivedCityAirports)
         {
-            var url = "https://api.travelpayouts.com/aviasales/v3/prices_for_dates?origin=" + departureCityAirport.code + "&destination=" + arrivedCityAirport.code + "&departure_at=2022-06-24&unique=false&sorting=price&direct=false&currency=eur&limit=30&page=1&one_way=true&token=162ce094c6662a7b42f9ae736236a88a"
+
+            var url = "https://api.travelpayouts.com/aviasales/v3/prices_for_dates?origin=" + departureCityAirport.code + "&destination=" + arrivedCityAirport.code + "&departure_at="+ departureDate +"&unique=false&sorting=price&direct=false&currency=eur&limit=30&page=1&one_way=true&token=162ce094c6662a7b42f9ae736236a88a"
 
             try {
                 var result = await axios({
@@ -75,7 +78,6 @@ async function setAirplanesByCities(req, res)
             {
                 var apiData = result.data.data[0];
                 // var arrived_at = new Date(new Date(apiData.departure_at).getTime() + apiData.duration*60000);
-
                 if (airplanes.length === 0 || airplanes.price > apiData.price)
                 {
                     airplanes = {
@@ -84,11 +86,19 @@ async function setAirplanesByCities(req, res)
                         departure_at:  apiData.departure_at,
                         duration: apiData.duration,
                         price: apiData.price,
-                        flight_number: apiData.flight_number
+                        flight_number: apiData.flight_number,
                     };
                 }
             }
         }
+    }
+    if (airplanes.length === 0)
+    {
+        return res.status(404).json({
+            state: "error",
+            message: "Aucun avion disponible",
+            data: null
+        });
     }
 
     const newTransport = await models.Transport.create({
