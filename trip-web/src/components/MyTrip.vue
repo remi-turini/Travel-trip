@@ -15,11 +15,104 @@
       <div class="container">
         <div class="row">
           <div class="col">
-            <div class="destination" v-for="item in travels.Destinations" :key="item.id">
-              <span class="h5">{{ item.departureCity }} > {{ item.arrivedCity }}</span>
-              <button class="btn btn-primary" :id=item.id>Décollage</button>
+            <div
+              class="destination"
+              v-for="item in travels.Destinations"
+              :key="item.id"
+            >
+              <span class="h5"
+                >{{ item.departureCity }} > {{ item.arrivedCity }}</span
+              >
+              <button
+                class="btn btn-primary"
+                id="btn-transport"
+                @onclick="getTransport(item.id)"
+              >
+                Décollage
+              </button>
             </div>
-            <button class="btn btn-primary">+ Ajout d'une destination</button>
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
+                + Ajout d'une destination
+              </button>
+
+              <!-- Modal -->
+              <div
+                class="modal fade"
+                id="exampleModal"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">
+                        Ajout d'une nouvelle destination :
+                      </h5>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div class="modal-body">
+                      <form
+                        @submit.prevent="addDestination"
+                        id="add-destination"
+                        :data-id="travels.id"
+                      >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="email"
+                          v-model="departureCity"
+                          placeholder="Ville de départ"
+                          required
+                        />
+                        <input
+                          type="date"
+                          class="form-control"
+                          v-model="departureDate"
+                          id="start-at"
+                          aria-describedby="Date de départ"
+                          placeholder="Date de début"
+                          name="departureDate"
+                          required
+                        />
+                        <input
+                          type="date"
+                          class="form-control"
+                          v-model="arrivedDate"
+                          id="end-at"
+                          aria-describedby="emailHelp"
+                          placeholder="Date de fin"
+                          name="arrivedDate"
+                          required
+                        />
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="email"
+                          v-model="arrivedCity"
+                          placeholder="Ville d'arrivée"
+                          required
+                        />
+                        <button class="btn btn-primary" type="submit">
+                          Partager
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="col">
             <GMapMap
@@ -42,21 +135,27 @@
       <div class="container">
         <h2 class="h2">Mes suggestions</h2>
         <h3 class="h3 text-center">Hôtels</h3>
-        <div class="d-flex hotels suggestions-section" style="overflow-x: scroll">
+        <div
+          class="d-flex hotels suggestions-section"
+          style="overflow-x: scroll"
+        >
           <div class="col-auto" v-for="item in hotels" :key="item.id">
-              <h4 class="h5">{{ item.name }}</h4>
-              <img :src="item.photo" />
-              <button class="btn btn-primary">Choisir</button>
+            <h4 class="h5">{{ item.name }}</h4>
+            <img :src="item.photo" />
+            <button class="btn btn-primary">Choisir</button>
           </div>
         </div>
       </div>
       <div class="container">
         <h3 class="h3 text-center">Restaurants</h3>
-        <div class="d-flex restaurants suggestions-section" style="overflow-x: scroll">
+        <div
+          class="d-flex restaurants suggestions-section"
+          style="overflow-x: scroll"
+        >
           <div class="col-auto" v-for="item in restaurants" :key="item.id">
-              <h4 class="h5">{{ item.name }}</h4>
-              <img :src="item.photo" />
-              <button class="btn btn-primary">Choisir</button>
+            <h4 class="h5">{{ item.name }}</h4>
+            <img :src="item.photo" />
+            <button class="btn btn-primary">Choisir</button>
           </div>
         </div>
       </div>
@@ -67,7 +166,7 @@
 <script>
 import jsPDF from "jspdf";
 import moment from "moment";
-
+import { notify } from "@kyvg/vue3-notification";
 export default {
   name: "HelloWorld",
   props: {
@@ -77,7 +176,7 @@ export default {
     return {
       travels: {},
       hotels: {},
-      restaurants:{},
+      restaurants: {},
       center: { lat: 51.093048, lng: 6.84212 },
       markers: [
         {
@@ -123,8 +222,8 @@ export default {
           for (const gps in newData.data.Destinations) {
             console.log(gps);
           }
-          await this.suggestionHotel();
-          await this.suggestionRestaurant();
+          //await this.suggestionHotel();
+          //await this.suggestionRestaurant();
         } else {
           console.log(res1.message);
         }
@@ -204,6 +303,65 @@ export default {
       }
       return markers;
     },
+    async getTransports(id) {
+      console.log(id);
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.bearer,
+        },
+        body: JSON.stringify({
+          destinationId: id,
+        }),
+      };
+      try {
+        const truc = await fetch(
+          "http://localhost:3000/transport",
+          requestOptions
+        );
+        const data = await truc.json();
+        if (data.state == "ok") {
+          console.log("test");
+          alert(data.message);
+        } else {
+          console.log(data.message);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async addDestination() {
+      var id = document.getElementById("add-destination");
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.bearer,
+        },
+        body: JSON.stringify({
+          travelId: id.dataset.id,
+          departureCity: this.departureCity,
+          departureDate: this.departureDate,
+          arrivedCity: this.arrivedCity,
+          arrivedDate: this.arrivedDate,
+        }),
+      };
+      try {
+        const truc = await fetch(
+          "http://localhost:3000/destination",
+          requestOptions
+        );
+        const data = await truc.json();
+        if (data.state == "ok") {
+          notify(alert(data.message));
+        } else {
+          console.log(data.message);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     //jspdf does not include the bootstrap style layout
     download() {
       var pdf = new jsPDF();
@@ -281,46 +439,49 @@ export default {
   min-height: 500px;
   padding-bottom: 100px;
 }
-.reservation h3{
+.reservation h3 {
   padding-top: 30px;
 }
 .reservation .suggestions-section img {
   height: 250px;
 }
-.reservation .suggestions-section .col-auto{
-    display: flex;
-    flex-direction: column;
-    margin-right: 20px;
-    background-color: white;
-    padding: 20px;
-    border-radius: 20px;
-}
-.reservation .suggestions-section .col-auto img{
-    border-radius: 10px;
-}
-.reservation .suggestions-section .col-auto .btn-primary{
+.reservation .suggestions-section .col-auto {
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+  background-color: white;
+  padding: 20px;
   border-radius: 20px;
-    width: 200px;
-    margin: auto;
-    margin-top: 20px;
 }
-.reservation .suggestions-section .col-auto .btn-primary:hover{
-    color: #679436;
-    background-color: white;
-    border-color: #679436;
+.reservation .suggestions-section .col-auto img {
+  border-radius: 10px;
 }
-.reservation .suggestions-section .col-auto .btn-primary:focus{
-    color: #679436;
-    background-color: white;
-    border-color: #679436;
+.reservation .suggestions-section .col-auto .btn-primary {
+  border-radius: 20px;
+  width: 200px;
+  margin: auto;
+  margin-top: 20px;
 }
-.resume .col{
+.reservation .suggestions-section .col-auto .btn-primary:hover {
+  color: #679436;
+  background-color: white;
+  border-color: #679436;
+}
+.reservation .suggestions-section .col-auto .btn-primary:focus {
+  color: #679436;
+  background-color: white;
+  border-color: #679436;
+}
+.resume .col {
   padding: 50px;
 }
-.resume .destination{
-      display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin: 10px 0px;
+.resume .destination {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 10px 0px;
+}
+.modal input{
+  margin-bottom: 10px;
 }
 </style>
