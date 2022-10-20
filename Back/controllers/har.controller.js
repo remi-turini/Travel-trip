@@ -20,7 +20,7 @@ async function allByCity(req, res)
         });
     }
 
-    var url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+ cities[0].lat +","+ cities[0].lon +"&radius=15000&type=&keyword="+ keyWord +"&key=AIzaSyDUpndmhQqRkr2EAy_2ZVbh5irpHXP0tFY"
+    var url = "Ici l'url google api avec une clé (supprimé car payante)"
 
     try {
         var multipleResult = await axios({
@@ -58,7 +58,7 @@ async function allByCity(req, res)
         // if(typeof result.photos !== "undefined"  && result.photos.length !== 0 && typeof result.photos.photo_reference !== "undefined")
         // {
         try {
-            var photoPlaceUrl = "https://maps.googleapis.com/maps/api/place/photo?photo_reference="+ result.photos[0].photo_reference +"&key=AIzaSyDUpndmhQqRkr2EAy_2ZVbh5irpHXP0tFY&maxwidth=400"
+            var photoPlaceUrl = "Ici l'url google api avec une clé (supprimé car payante)"
 
             var photoPlace = await axios({
                 url: photoPlaceUrl,
